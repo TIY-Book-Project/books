@@ -14,6 +14,10 @@ class BooksController < ApplicationController
 
   def index
     @books = Book.all
+    respond_to do |format|
+      format.json { render file: "books/index.json.jbuilder" }
+      format.html { render :index }
+    end
   end
 
   def show

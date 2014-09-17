@@ -1,7 +1,71 @@
-- @books.each do |book|
-  .well
-    %h1
-      = link_to book.title, book
-      %small by #{book.author}
-    %img.cover{ src: book.image_url }
-    %p= book.description
+%section{ "ng-controller" => "TabController as tabCtrl" }
+  %ul.nav.nav-tabs
+    %li{ "ng-class" => "{ active:tabCtrl.isSet(1) }" }
+      %a.btn{ "ng-click" => "tabCtrl.setTab(1)" }
+        iShelf
+    %li{ "ng-class" => "{ active:tabCtrl.isSet(2) }" }
+      %a.btn{ "ng-click" => "tabCtrl.setTab(2)" }
+        Search Google Books
+    %li.pull-right{ "ng-class" => "{ active:tabCtrl.isSet(3) }" }
+      %a.btn{ "ng-click" => "tabCtrl.setTab(3)" }
+        My Bookies
+
+  %div{ "ng-show" => "tabCtrl.isSet(1)" }
+    %br
+    %section{ "ng-controller" => "IndexController as indexCtrl" }
+      .row
+        .col-lg-4
+          %label{ "for" => "titleFilter" } Filter by title:
+          %input.form-control{ "name" => "titleFilter", "type" => "text", "ng-model" => "indexCtrl.show.titleFilter" }
+        .col-lg-4
+          %label{ "for" => "authorFilter" } Filter by author:
+          %input.form-control{ "name" => "authorFilter", "type" => "text", "ng-model" => "indexCtrl.show.authorFilter" }
+        .col-lg-4
+          %label{ "for" => "isbnFilter" } Search by ISBN:
+          %input.form-control{ "name" => "isbnFilter", "type" => "text", "ng-model" => "indexCtrl.show.isbnFilter" }
+      %br
+      .row
+        .col-lg-2
+          %label{} Search by Category:
+        .col-lg-10
+          %select.form-control
+      %hr
+      %table.table
+        %thead
+          %tr
+            %th Image
+            %th Title
+            %th Author
+            %th
+        %tbody
+          %tr{ "ng-repeat" => "book in indexCtrl.books | filter: {title: indexCtrl.show.titleFilter} | filter: {author: indexCtrl.show.authorFilter} | filter: {isbn: indexCtrl.show.isbnFilter}" }
+            %td
+              %a{ "href" => "/books/{{ book.id }}" }
+                %img.img-thumbnail{ "ng-src" => "{{ book.image_url }}", :width => "150px"}
+            %td{ "style" => "width: 600px" }
+              %h3 {{ book.title }}
+              %strong ISBN: {{ book.isbn }}
+              %p {{ book.description }}
+            %td
+              {{ book.author }}
+            %td
+              %a{:href => "/books/{{ book.id }}"} Details
+  %div{ "ng-show" => "tabCtrl.isSet(2)" }
+    %br
+    %section{ "ng-controller" => "TestController as testCtrl" }
+      Google API
+      Testing
+      %select.form-control{ "ng-model" => "testCtrl.selected.title", "ng-options" => "book.title for book in testCtrl.books" }
+        %option{ "value" => "" } --- Title ---
+      %select.form-control{ "ng-model" => "testCtrl.selected.author", "ng-options" => "book.author for book in testCtrl.titledbooks" }
+        %option{ "value" => "" } --- Author ---
+  %div{ "ng-show" => "tabCtrl.isSet(3)" }
+    %br
+    %section{ "ng-controller" => "FriendController as friendCtrl" }
+      %h3 My Friends
+      %ul
+        %li{ "ng-repeat" => "friend in friendCtrl.friends" }
+          {{ friend.email }}
+        %br
+      %button{ "ng-click" => "friendCtrl.addFriend()" }
+        +

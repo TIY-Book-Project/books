@@ -2,7 +2,7 @@
   = @book.title
   %small by #{@book.author}
 
-%img.cover{ src: @book.image_url }
+%img{ src: @book.image_url, style: "width: 200px" }
 
 %p= @book.description
 
