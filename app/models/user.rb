@@ -1,12 +1,14 @@
 class User < ActiveRecord::Base
+  has_many :book_shelves
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :omniauthable, :omniauth_providers => [:facebook, :amazon]
+         :omniauthable, :omniauth_providers => [:facebook, :amazon, :google_oauth2]
 
   # FIXME: these should probably be has_many :through =>
   #   / allow for doing JOINs
+  
   def friends
     target_ids = Friend.where(source_id: id).pluck :target_id
     User.find target_ids
