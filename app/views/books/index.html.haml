@@ -1,7 +1,102 @@
-- @books.each do |book|
-  .well
-    %h1
-      = link_to book.title, book
-      %small by #{book.author}
-    %img.cover{ src: book.image_url }
-    %p= book.description
+%section{ "ng-controller" => "TabController as tabCtrl" }
+  %ul.nav.nav-tabs
+    %li{ "ng-class" => "{ active:tabCtrl.isSet(1) }" }
+      %a.btn{ "ng-click" => "tabCtrl.setTab(1)" }
+        Search Google Books
+    %li{ "ng-class" => "{ active:tabCtrl.isSet(2) }" }
+      %a.btn{ "ng-click" => "tabCtrl.setTab(2)" }
+        My Saved Books
+    %li.pull-right{ "ng-class" => "{ active:tabCtrl.isSet(3) }" }
+      %a.btn{ "ng-click" => "tabCtrl.setTab(3)" }
+        Dashboard
+
+  %div{ "ng-show" => "tabCtrl.isSet(1)" }
+    %br
+    -# %section.well{ "ng-controller" => "SearchController as searchCtrl" }
+    = form_tag books_path, method: 'GET', class: "form" do
+      .form-group.col-lg-10
+        %input.form-control#search_input{ type: 'text', name: 'search', placeholder: 'Search for books' }
+      = submit_tag 'Search', class: "btn"
+    %hr
+    - if @results
+      - @results.each_with_index do |r, index|
+        .row
+          .col-lg-2
+            %img(src="#{r["volumeInfo"]["imageLinks"]["thumbnail"]}")
+          .col-lg-8
+            %h2= r["volumeInfo"]["title"]
+            - if r['volumeInfo']['authors']
+              - r["volumeInfo"]["authors"].each do |author|
+                %em by
+                %em= author
+            %p= r["volumeInfo"]["description"]
+          %button.btn.btn-default{ id: "#{index}" } Add to iShelf
+          -# %div{ "ng-controller" => "googleBooksHiddenDiv as div" }
+          -#   %div{ id: "div-item-data[#{index}]" }
+        %br
+      -# %form.well{ "name" => "searchForm", "ng-submit" => "searchCtrl.search()" }
+      -#   .form-group.col-lg-10
+      -#     %input.form-control{ "ng-model" => "searchCtrl.title", "required" => "true" , "placeholder" => "Search by title" }
+      -#   %button.btn{ "type" => "submit", "ng-disabled" => "searchForm.$invalid" } Search
+
+  %div{ "ng-show" => "tabCtrl.isSet(2)" }
+    %br
+    %section{ "ng-controller" => "IndexController as indexCtrl" }
+      .row
+        .col-lg-4
+          %label{ "for" => "titleFilter" } Filter by title:
+          %input.form-control{ "name" => "titleFilter", "type" => "text", "ng-model" => "indexCtrl.show.titleFilter" }
+        .col-lg-4
+          %label{ "for" => "authorFilter" } Filter by author:
+          %input.form-control{ "name" => "authorFilter", "type" => "text", "ng-model" => "indexCtrl.show.authorFilter" }
+        .col-lg-4
+          %label{ "for" => "isbnFilter" } Search by ISBN:
+          %input.form-control{ "name" => "isbnFilter", "type" => "text", "ng-model" => "indexCtrl.show.isbnFilter" }
+      %br
+      .row
+        .col-lg-2
+          %label{} Search by Category:
+        .col-lg-10
+          %select.form-control
+            %option{ "value" => "" } -----Coming Soon
+      %hr
+      %table.table
+        %thead
+          %tr
+            %th Image
+            %th Description
+            %th Shelf
+            %th
+        %tbody
+          %tr{ "ng-repeat" => "book in indexCtrl.books | filter: {title: indexCtrl.show.titleFilter} | filter: {author: indexCtrl.show.authorFilter} | filter: {isbn: indexCtrl.show.isbnFilter}" }
+            %td
+              %a{ "href" => "/books/{{ book.id }}" }
+                %img.img-thumbnail{ "ng-src" => "{{ book.image_url }}", :width => "150px"}
+            %td{ "style" => "width: 600px" }
+              %h3 {{ book.title }}
+              %h3 by {{ book.author }}
+              %strong ISBN: {{ book.isbn }}
+              %p {{ book.description }}
+            %td
+              (Clickable Shelf Name)
+            %td
+              %a{:href => "/books/{{ book.id }}"} Details
+
+      -# Testing
+      -# %section{ "ng-controller" => "TestController as testCtrl" }
+      -# %select.form-control{ "ng-model" => "testCtrl.title", "ng-options" => "book.title for book in testCtrl.books", "ng-change" => "testCtrl.getAuthor()" }
+      -#   %option{ "value" => "" } --- Title ---
+      -# %select.form-control{ "ng-model" => "testCtrl.author", "ng-options" => "author for author in testCtrl.authors" }
+      -#   %option{ "value" => "" } --- Author ---
+  %div{ "ng-show" => "tabCtrl.isSet(3)" }
+    %br
+    %section{ "ng-controller" => "FriendController as friendCtrl" }
+      %h3 My Friends
+      %ul
+        %li{ "ng-repeat" => "friend in friendCtrl.friends" }
+          {{ friend.email }}
+        %br
+      %button{ "ng-click" => "friendCtrl.addFriend()" }
+        +
+      %h3 Recommended Books
+      %h3 Books I Recommended
