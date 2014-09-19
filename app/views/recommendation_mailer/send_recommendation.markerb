@@ -1,3 +1,8 @@
-### <%= @book.title %>
+### A Friend Recommends  <%= @book.title %> by <%= @book.author %>
 
-I think you will like this!
+<%= @text %>
+
+[Check it out now!](<%= book_url(@book) %>)
+
+---------------------------------------
+
