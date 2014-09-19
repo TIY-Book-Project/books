@@ -2,7 +2,14 @@ class BooksController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show, :reviews]
 
   # before_filter :set_json_format, except: [:index, :show]
-  return_json except: [:index, :show]
+  return_json except: [:index, :show, :search]
+
+  # def search
+  #   # @results = BookSearch.new(params[:search]).run
+  #   # render :json => @results
+  #
+  #   redirect_to :index
+  # end
 
   def reviews
     @reviews = Book.find(params[:id]).reviews
@@ -14,6 +21,11 @@ class BooksController < ApplicationController
 
   def index
     @books = Book.all
+    if params[:search]
+      @results = GoogleBooksApi.new(params[:search]).run
+      # redirect_to root_path
+      # render :json => @result
+    end
     respond_to do |format|
       format.json { render file: "books/index.json.jbuilder" }
       format.html { render :index }

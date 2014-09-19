@@ -2,15 +2,44 @@
   %ul.nav.nav-tabs
     %li{ "ng-class" => "{ active:tabCtrl.isSet(1) }" }
       %a.btn{ "ng-click" => "tabCtrl.setTab(1)" }
-        iShelf
+        Search Google Books
     %li{ "ng-class" => "{ active:tabCtrl.isSet(2) }" }
       %a.btn{ "ng-click" => "tabCtrl.setTab(2)" }
-        Search Google Books
+        My Saved Books
     %li.pull-right{ "ng-class" => "{ active:tabCtrl.isSet(3) }" }
       %a.btn{ "ng-click" => "tabCtrl.setTab(3)" }
-        My Bookies
+        Dashboard
 
   %div{ "ng-show" => "tabCtrl.isSet(1)" }
+    %br
+    -# %section.well{ "ng-controller" => "SearchController as searchCtrl" }
+    = form_tag books_path, method: 'GET', class: "form" do
+      .form-group.col-lg-10
+        %input.form-control#search_input{ type: 'text', name: 'search', placeholder: 'Search for books' }
+      = submit_tag 'Search', class: "btn"
+    %hr
+    - if @results
+      - @results.each_with_index do |r, index|
+        .row
+          .col-lg-2
+            %img(src="#{r["volumeInfo"]["imageLinks"]["thumbnail"]}")
+          .col-lg-8
+            %h2= r["volumeInfo"]["title"]
+            - if r['volumeInfo']['authors']
+              - r["volumeInfo"]["authors"].each do |author|
+                %em by
+                %em= author
+            %p= r["volumeInfo"]["description"]
+          %button.btn.btn-default{ id: "#{index}" } Add to iShelf
+          -# %div{ "ng-controller" => "googleBooksHiddenDiv as div" }
+          -#   %div{ id: "div-item-data[#{index}]" }
+        %br
+      -# %form.well{ "name" => "searchForm", "ng-submit" => "searchCtrl.search()" }
+      -#   .form-group.col-lg-10
+      -#     %input.form-control{ "ng-model" => "searchCtrl.title", "required" => "true" , "placeholder" => "Search by title" }
+      -#   %button.btn{ "type" => "submit", "ng-disabled" => "searchForm.$invalid" } Search
+
+  %div{ "ng-show" => "tabCtrl.isSet(2)" }
     %br
     %section{ "ng-controller" => "IndexController as indexCtrl" }
       .row
@@ -29,13 +58,14 @@
           %label{} Search by Category:
         .col-lg-10
           %select.form-control
+            %option{ "value" => "" } -----Coming Soon
       %hr
       %table.table
         %thead
           %tr
             %th Image
-            %th Title
-            %th Author
+            %th Description
+            %th Shelf
             %th
         %tbody
           %tr{ "ng-repeat" => "book in indexCtrl.books | filter: {title: indexCtrl.show.titleFilter} | filter: {author: indexCtrl.show.authorFilter} | filter: {isbn: indexCtrl.show.isbnFilter}" }
@@ -44,21 +74,20 @@
                 %img.img-thumbnail{ "ng-src" => "{{ book.image_url }}", :width => "150px"}
             %td{ "style" => "width: 600px" }
               %h3 {{ book.title }}
+              %h3 by {{ book.author }}
               %strong ISBN: {{ book.isbn }}
               %p {{ book.description }}
             %td
-              {{ book.author }}
+              (Clickable Shelf Name)
             %td
               %a{:href => "/books/{{ book.id }}"} Details
-  %div{ "ng-show" => "tabCtrl.isSet(2)" }
-    %br
-    %section{ "ng-controller" => "TestController as testCtrl" }
-      Google API
-      Testing
-      %select.form-control{ "ng-model" => "testCtrl.selected.title", "ng-options" => "book.title for book in testCtrl.books" }
-        %option{ "value" => "" } --- Title ---
-      %select.form-control{ "ng-model" => "testCtrl.selected.author", "ng-options" => "book.author for book in testCtrl.titledbooks" }
-        %option{ "value" => "" } --- Author ---
+
+      -# Testing
+      -# %section{ "ng-controller" => "TestController as testCtrl" }
+      -# %select.form-control{ "ng-model" => "testCtrl.title", "ng-options" => "book.title for book in testCtrl.books", "ng-change" => "testCtrl.getAuthor()" }
+      -#   %option{ "value" => "" } --- Title ---
+      -# %select.form-control{ "ng-model" => "testCtrl.author", "ng-options" => "author for author in testCtrl.authors" }
+      -#   %option{ "value" => "" } --- Author ---
   %div{ "ng-show" => "tabCtrl.isSet(3)" }
     %br
     %section{ "ng-controller" => "FriendController as friendCtrl" }
@@ -69,3 +98,5 @@
         %br
       %button{ "ng-click" => "friendCtrl.addFriend()" }
         +
+      %h3 Recommended Books
+      %h3 Books I Recommended

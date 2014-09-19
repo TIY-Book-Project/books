@@ -23,7 +23,7 @@ app.controller("FriendController", [ '$resource', '$window' ,function($resource,
   friendCtrl.friends = friendsIndex.query();
 
   friendCtrl.addFriend = function(){
-    $window.alert('Oh Shit, you did something wrong ...'); // remove this later
+    $window.alert('MISTAKES WERE MADE ...'); // implement adding users
   };
 }]);
 
@@ -37,6 +37,23 @@ app.controller("TabController", function(){
   tabCtrl.setTab = function(setTab){
     tabCtrl.tab = setTab;
   };
+});
+
+app.controller("googleBooksHiddenDiv", function(){
+  var div = document.getElementById('div-item-data');
+});
+
+app.controller("SearchController", function(){
+  var searchCtrl = this;
+  var searchedIndex = $resource(
+    '/books/:verb.json',
+    {},
+    {search: {method: 'GET', params: {verb: 'search'}}}
+  );
+  //
+  // searchCtrl.search = function(){
+  //   searchCtrl.searchedBooks = searchedIndex.query();
+  // };
 });
 
 // app.controller("TestController", ['$window', '$resource', function($window, $resource){
@@ -53,13 +70,24 @@ app.controller("TestController", ['$resource', '$location', function($resource, 
     {}
   );
   testCtrl.books = booksindex.query();
-  testCtrl.selected = {};
-  testCtrl.titledbooks = [];
-
+  // testCtrl.selected = {};
+  // testCtrl.titledbooks = [];
+  //
   testCtrl.authors = []; //ng-repeat
 
-  testCtrl.updateAuthors = function(){}; // function that updates testCtrl.authors
+  testCtrl.getAuthor = function(){
 
+    testCtrl.authors = testCtrl.title.author;
+    // angular.forEach(testCtrl.books, function(object){
+    //   if(object.title===testCtrl.title){
+    //     this.push(object);
+    //   }
+    // }, testCtrl.authors);
+    // return testCtrl.authors;
+
+
+   // function that updates testCtrl.authors
+  };
   // angular.forEach(testCtrl.books, function(key, val){
   //   if(val !== testCtrl.selected.title){
   //
