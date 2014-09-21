@@ -74,6 +74,17 @@ class BooksController < ApplicationController
     RecommendationMailer.send_recommendation(@recommendation).deliver
   end
 
+  def add_to_shelf
+    book = Book.find params[:id]
+    params[:shelves].each do |shelf|
+      bookshelf = BookShelf.find shelf
+      if(bookshelf.user_id == current_user.id)
+        bookshelf.books << book
+      end
+    end
+    head :ok
+  end
+
 private
 
   def create_params

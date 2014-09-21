@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140916212652) do
+ActiveRecord::Schema.define(version: 20140921215218) do
 
   create_table "book_shelves", force: true do |t|
     t.string   "name"
@@ -21,6 +21,11 @@ ActiveRecord::Schema.define(version: 20140916212652) do
   end
 
   add_index "book_shelves", ["user_id"], name: "index_book_shelves_on_user_id"
+
+  create_table "book_shelves_books", id: false, force: true do |t|
+    t.integer "book_shelf_id"
+    t.integer "book_id"
+  end
 
   create_table "books", force: true do |t|
     t.string   "title"

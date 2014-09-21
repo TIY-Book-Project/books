@@ -107,4 +107,32 @@ describe BooksController do
     expect( response.json[:text] ).to eq 'Check it'
     expect( bob.received_recommendations.last.sender ).to eq me
   end
+
+  it 'lets logged in users add books to their bookshelves' do
+    user = create :user
+    sign_in user
+
+    book = create :book
+    shelf_one  = create :book_shelf, user: user
+    shelf_two  = create :book_shelf, user: user
+
+    expect( book.book_shelves.count ).to eq 0
+    post :add_to_shelf, id: book.id, shelves: [shelf_one, shelf_two]
+    expect( book.book_shelves.count ).to eq 2
+    expect( response ).to be_successful
+  end
+
+  it 'does not allow logged in users to add books to others bookshelves'
+
+  it 'it does not let a non-logged in user add a book to a shelf' do
+    user = create :user
+
+    book = create :book
+
+    shelf_one = create :book_shelf, user: user
+
+    post :add_to_shelf, id: book.id, shelves: [shelf_one]
+    expect(response).to redirect_to user_session_path
+  end
+
 end

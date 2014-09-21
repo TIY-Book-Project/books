@@ -8,6 +8,11 @@ devise_for :users, :controllers => { :omniauth_callbacks => "users/omniauth_call
       post :review
       post :recommend
     end
+  
+    collection do
+      post :add_to_shelf
+    end
+  
   end
 
   resources :users, only: [:index] do

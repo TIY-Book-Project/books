@@ -50,6 +50,8 @@ feature 'BookShelves' do
       expect( page ).to_not have_css('button#delete_' + "#{@shelf.id}")
     end
 
+    it 'should do something with books when a bookshelf is deleted'
+
     it 'should allow the user to create a bookshelf' do
       visit bookshelves_path
       expect( page ).to have_css('#create_bookshelf')
